@@ -1,0 +1,11 @@
+[package]
+name = "agent-rcon"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+agent-proto = { path = "../agent-proto" }
+serde.workspace = true
+serde_json.workspace = true

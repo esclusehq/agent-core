@@ -1,0 +1,46 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/agent-proto",
+    "crates/agent-config",
+    "crates/agent-security",
+    "crates/agent-event",
+    "crates/agent-health",
+    "crates/agent-capability",
+    "crates/agent-task",
+    "crates/agent-metrics",
+    "crates/agent-runtime",
+    "crates/agent-ssh",
+    "crates/agent-backup",
+    "crates/agent-rcon",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Escluse Team <team@escluse.com>"]
+license = "MIT"
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2"
+tracing = "0.1"
+async-trait = "0.1"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+overflow-checks = false
+
+[profile.dev]
+opt-level = 0
+
+[profile.dev.package."*"]
+opt-level = 3

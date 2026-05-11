@@ -1,0 +1,13 @@
+[package]
+name = "agent-ssh"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+agent-proto = { path = "../agent-proto" }
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+ssh2 = "0.9"

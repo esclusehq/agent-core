@@ -1,0 +1,21 @@
+[package]
+name = "agent-config"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+agent-proto = { path = "../agent-proto" }
+serde = { workspace = true }
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+dirs = "5"
+hostname = "0.3"
+toml = "0.8"
+tracing-appender = "0.2"
+
+[dev-dependencies]
+tokio = { workspace = true }

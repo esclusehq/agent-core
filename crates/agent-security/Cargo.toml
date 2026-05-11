@@ -1,0 +1,20 @@
+[package]
+name = "agent-security"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+agent-proto = { path = "../agent-proto" }
+serde = { workspace = true }
+serde_json.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+jsonwebtoken = "9"
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,0 +1,16 @@
+[package]
+name = "agent-health"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+agent-proto = { path = "../agent-proto" }
+serde = { workspace = true }
+tokio = { workspace = true }
+tracing.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true }
