@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-05-12
+## [v0.0.1] - 2026-05-12
 
 ### Added
 
@@ -15,18 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Crate | Version | Description |
 |-------|---------|-------------|
-| `agent-proto` | 0.1.0 | Task, TaskResult, TaskError, TaskPriority, WebSocket message types, protocol version |
-| `agent-config` | 0.1.0 | Config loading from env/files, validation, SecretString |
-| `agent-health` | 0.1.0 | Circuit breaker, retry with backoff, health monitoring |
-| `agent-security` | 0.1.0 | JWT validation, rate limiting (token bucket), audit logging |
-| `agent-event` | 0.1.0 | Pub/sub event bus, task lifecycle events |
-| `agent-capability` | 0.1.0 | Capability registry, task-capability matcher |
-| `agent-task` | 0.1.0 | Priority queue, task dispatcher, concurrency control |
-| `agent-metrics` | 0.1.0 | System metrics (CPU, memory, disk, network) |
-| `agent-runtime` | 0.1.0 | Docker/Podman detection |
-| `agent-ssh` | 0.1.0 | SSH client, SFTP, connection pooling |
-| `agent-backup` | 0.1.0 | Compression (zstd, gzip) |
-| `agent-rcon` | 0.1.0 | RCON protocol client |
+| `agent-proto` | 0.0.1 | Task, TaskResult, TaskError, TaskPriority, WebSocket message types, protocol version |
+| `agent-config` | 0.0.1 | Config loading from env/files, validation, SecretString |
+| `agent-health` | 0.0.1 | Circuit breaker, retry with backoff, health monitoring |
+| `agent-security` | 0.0.1 | JWT validation, rate limiting (token bucket), audit logging |
+| `agent-event` | 0.0.1 | Pub/sub event bus, task lifecycle events |
+| `agent-capability` | 0.0.1 | Capability registry, task-capability matcher |
+| `agent-task` | 0.0.1 | Priority queue, task dispatcher, concurrency control |
+| `agent-metrics` | 0.0.1 | System metrics (CPU, memory, disk, network) |
+| `agent-runtime` | 0.0.1 | Docker/Podman detection |
+| `agent-ssh` | 0.0.1 | SSH client, SFTP, connection pooling |
+| `agent-backup` | 0.0.1 | Compression (zstd, gzip) |
+| `agent-rcon` | 0.0.1 | RCON protocol client |
 
 ### Shared Workspace Dependencies
 
