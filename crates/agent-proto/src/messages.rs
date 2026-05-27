@@ -15,6 +15,7 @@ pub enum AgentToBackend {
     MetricsReport(MetricsPayload),
     LogLine(LogLinePayload),
     StatusUpdate(AgentStatusPayload),
+    DnsStatus(DnsStatusPayload),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -25,6 +26,7 @@ pub enum BackendToAgent {
     TaskCancel(TaskCancelPayload),
     Ping,
     ConfigUpdate(serde_json::Value),
+    DnsConfig(DnsConfigPayload),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -131,6 +133,36 @@ impl Default for AgentStatus {
 pub struct TaskCancelPayload {
     pub task_id: Uuid,
     pub reason: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DnsConfigPayload {
+    pub api_token: String,
+    pub zone_id: String,
+    pub zone_name: String,
+    pub wildcard_domain: String,
+    pub auto_refresh: bool,
+    pub refresh_interval_secs: u64,
+    pub public_ip: Option<String>,
+    pub subdomain: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DnsStatusPayload {
+    pub domain: String,
+    pub record_type: String,
+    pub record_id: Option<String>,
+    pub ip: String,
+    pub status: DnsRecordStatus,
+    pub message: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub enum DnsRecordStatus {
+    Created,
+    Updated,
+    Deleted,
+    Error,
 }
 
 #[cfg(test)]
