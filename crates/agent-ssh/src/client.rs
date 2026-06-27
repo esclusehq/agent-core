@@ -104,6 +104,12 @@ impl SshClient {
         Ok(output)
     }
 
+    pub async fn disconnect(&self) -> Result<(), TaskError> {
+        let session = self.session.read().await;
+        session.disconnect(None, "client disconnect", None)
+            .map_err(|e| TaskError::new("DISCONNECT_FAILED", &e.to_string(), false))
+    }
+
     pub async fn execute_with_stdin(
         &self,
         command: &str,
