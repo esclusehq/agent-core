@@ -36,18 +36,30 @@ pub enum BackendToAgent {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegisterPayload {
+    #[serde(rename = "name")]
     pub agent_name: String,
+    #[serde(rename = "agent_version")]
     pub version: String,
     pub capabilities: Vec<String>,
-    pub platform: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub platform: Option<String>,
+    #[serde(rename = "container_runtime")]
     pub runtime: Option<String>,
+    #[serde(skip)]
     pub protocol_version: u32,
+    #[serde(default)]
     pub total_memory: Option<u64>,
+    #[serde(default)]
     pub cpu_cores: Option<u32>,
+    #[serde(rename = "id")]
     pub agent_id: Option<Uuid>,
     pub ip: String,
-    pub os_info: String,
+    #[serde(default)]
+    pub os_info: Option<String>,
+    #[serde(default)]
     pub podman_version: Option<String>,
+    #[serde(default)]
+    pub containers: Vec<serde_json::Value>,
 }
 
 impl RegisterPayload {
@@ -56,15 +68,16 @@ impl RegisterPayload {
             agent_name,
             version: env!("CARGO_PKG_VERSION").to_string(),
             capabilities,
-            platform: std::env::consts::OS.to_string(),
+            platform: Some(std::env::consts::OS.to_string()),
             runtime: None,
             protocol_version: super::protocol::PROTOCOL_VERSION,
             total_memory: None,
             cpu_cores: None,
             agent_id: None,
             ip: String::new(),
-            os_info: std::env::consts::OS.to_string(),
+            os_info: Some(std::env::consts::OS.to_string()),
             podman_version: None,
+            containers: Vec::new(),
         }
     }
 
@@ -77,7 +90,7 @@ impl RegisterPayload {
     pub fn with_node_info(mut self, agent_id: Uuid, ip: String, os_info: String, podman_version: Option<String>) -> Self {
         self.agent_id = Some(agent_id);
         self.ip = ip;
-        self.os_info = os_info;
+        self.os_info = Some(os_info);
         self.podman_version = podman_version;
         self
     }
@@ -85,6 +98,7 @@ impl RegisterPayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegisterAckPayload {
+    #[serde(rename = "node_id")]
     pub agent_id: Uuid,
     pub heartbeat_interval_secs: u64,
     pub protocol_version: u32,
@@ -92,6 +106,7 @@ pub struct RegisterAckPayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HeartbeatPayload {
+    #[serde(rename = "node_id")]
     pub agent_id: Uuid,
     pub timestamp: DateTime<Utc>,
     pub task_count: u32,
@@ -100,6 +115,7 @@ pub struct HeartbeatPayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LogLinePayload {
+    #[serde(rename = "node_id")]
     pub agent_id: Uuid,
     pub line: String,
     pub timestamp: DateTime<Utc>,
@@ -132,6 +148,7 @@ pub struct DiskUsage {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentStatusPayload {
+    #[serde(rename = "node_id")]
     pub agent_id: Uuid,
     pub status: AgentStatus,
     pub task_id: Option<Uuid>,
@@ -183,6 +200,7 @@ pub struct DnsStatusPayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CrashReportPayload {
+    #[serde(rename = "node_id")]
     pub agent_id: Uuid,
     pub exit_code: i32,
     pub log_excerpt: String,
@@ -208,6 +226,7 @@ pub struct RelayConfigPayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ContainerEventPayload {
+    #[serde(rename = "node_id")]
     pub agent_id: Uuid,
     pub event: String,
     pub container_id: String,
