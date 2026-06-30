@@ -30,6 +30,7 @@ pub enum BackendToAgent {
     ConfigUpdate(serde_json::Value),
     DnsConfig(DnsConfigPayload),
     RelayConfigSync(RelayConfigPayload),
+    #[serde(rename = "error")]
     BackendError(BackendErrorPayload),
 }
 
