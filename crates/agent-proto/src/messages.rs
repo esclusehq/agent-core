@@ -109,21 +109,39 @@ pub struct RegisterAckPayload {
 pub struct HeartbeatPayload {
     #[serde(rename = "node_id")]
     pub agent_id: Uuid,
-    pub timestamp: DateTime<Utc>,
-    pub task_count: u32,
-    pub status: AgentStatus,
+    pub status: String,
     #[serde(default)]
-    pub cpu_percent: f32,
+    pub metrics: Option<NodeMetrics>,
     #[serde(default)]
+    pub containers: Vec<ContainerStatus>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NodeMetrics {
+    pub cpu_usage: f64,
     pub memory_used: u64,
-    #[serde(default)]
     pub memory_total: u64,
+    pub disk_used: u64,
+    pub disk_total: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ContainerStatus {
+    pub id: String,
+    pub name: String,
+    pub status: String,
     #[serde(default)]
-    pub disk_usage: Vec<DiskUsage>,
+    pub cpu: f64,
     #[serde(default)]
-    pub net_rx_bytes: u64,
+    pub memory: u64,
     #[serde(default)]
-    pub net_tx_bytes: u64,
+    pub memory_limit: Option<u64>,
+    #[serde(default)]
+    pub disk_usage: Option<u64>,
+    #[serde(default)]
+    pub players: Option<i32>,
+    #[serde(default)]
+    pub tps: Option<f64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -275,11 +293,21 @@ mod tests {
     fn test_heartbeat_payload() {
         let payload = HeartbeatPayload {
             agent_id: Uuid::new_v4(),
-            timestamp: Utc::now(),
-            task_count: 5,
-            status: AgentStatus::Online,
+            status: "online".to_string(),
+            metrics: Some(NodeMetrics {
+                cpu_usage: 42.5,
+                memory_used: 8589934592,
+                memory_total: 17179869184,
+                disk_used: 107374182400,
+                disk_total: 536870912000,
+            }),
+            containers: vec![],
         };
-        assert_eq!(payload.status, AgentStatus::Online);
+        assert_eq!(payload.status, "online");
+        assert!(payload.metrics.is_some());
+        let json = serde_json::to_value(&payload).unwrap();
+        assert_eq!(json["status"], "online");
+        assert!(json["metrics"]["cpu_usage"].is_number());
     }
 
     #[test]
@@ -350,7 +378,7 @@ mod tests {
             .with_node_info(Uuid::nil(), "10.0.0.1".into(), "linux".into(), Some("4.0".into()));
         assert_eq!(payload.agent_id, Some(Uuid::nil()));
         assert_eq!(payload.ip, "10.0.0.1");
-        assert_eq!(payload.os_info, "linux");
+        assert_eq!(payload.os_info, Some("linux".to_string()));
         assert_eq!(payload.podman_version, Some("4.0".into()));
     }
 
