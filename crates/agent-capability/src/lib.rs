@@ -19,6 +19,7 @@ pub enum Capability {
     BackupCreate,
     BackupRestore,
     Metrics,
+    DirectExecutor,
 }
 
 impl std::fmt::Display for Capability {
@@ -39,6 +40,7 @@ impl std::fmt::Display for Capability {
             Capability::BackupCreate => write!(f, "backup_create"),
             Capability::BackupRestore => write!(f, "backup_restore"),
             Capability::Metrics => write!(f, "metrics"),
+            Capability::DirectExecutor => write!(f, "direct_executor"),
         }
     }
 }
@@ -100,6 +102,13 @@ pub fn required_for(task_type: &str) -> Vec<Capability> {
         "sftp.upload" => vec![Capability::SFTP],
         "sftp.download" => vec![Capability::SFTP],
         "metrics.report" => vec![Capability::Metrics],
+        "direct.server.create" => vec![Capability::DirectExecutor],
+        "direct.server.start" => vec![Capability::DirectExecutor],
+        "direct.server.stop" => vec![Capability::DirectExecutor],
+        "direct.server.restart" => vec![Capability::DirectExecutor],
+        "direct.server.delete" => vec![Capability::DirectExecutor],
+        "direct.server.logs" => vec![Capability::DirectExecutor],
+        "direct.server.status" => vec![Capability::DirectExecutor],
         _ => vec![],
     }
 }
@@ -135,5 +144,20 @@ mod tests {
 
         assert!(can_handle(&registry, "server.start"));
         assert!(!can_handle(&registry, "server.stop"));
+    }
+
+    #[test]
+    fn test_direct_executor_capability() {
+        let mut registry = CapabilityRegistry::new();
+        registry.register(Capability::DirectExecutor);
+        assert!(registry.has(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.start").contains(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.create").contains(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.stop").contains(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.restart").contains(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.delete").contains(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.logs").contains(&Capability::DirectExecutor));
+        assert!(required_for("direct.server.status").contains(&Capability::DirectExecutor));
+        assert_eq!(format!("{}", Capability::DirectExecutor), "direct_executor");
     }
 }
