@@ -12,7 +12,6 @@ pub enum AgentToBackend {
     Register(RegisterPayload),
     Heartbeat(HeartbeatPayload),
     TaskResult(TaskResult),
-    MetricsReport(MetricsPayload),
     LogLine(LogLinePayload),
     StatusUpdate(AgentStatusPayload),
     DnsStatus(DnsStatusPayload),
@@ -113,6 +112,18 @@ pub struct HeartbeatPayload {
     pub timestamp: DateTime<Utc>,
     pub task_count: u32,
     pub status: AgentStatus,
+    #[serde(default)]
+    pub cpu_percent: f32,
+    #[serde(default)]
+    pub memory_used: u64,
+    #[serde(default)]
+    pub memory_total: u64,
+    #[serde(default)]
+    pub disk_usage: Vec<DiskUsage>,
+    #[serde(default)]
+    pub net_rx_bytes: u64,
+    #[serde(default)]
+    pub net_tx_bytes: u64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
