@@ -98,9 +98,11 @@ impl RegisterPayload {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegisterAckPayload {
-    #[serde(rename = "node_id")]
-    pub agent_id: Uuid,
+    #[serde(default, rename = "node_id")]
+    pub agent_id: Option<Uuid>,
+    #[serde(default)]
     pub heartbeat_interval_secs: u64,
+    #[serde(default)]
     pub protocol_version: u32,
 }
 
