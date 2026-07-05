@@ -45,8 +45,34 @@ pub struct AgentConfig {
     // DATA
     pub data_dir: PathBuf,
 
+    // UPDATER
+    pub auto_update: AutoUpdateConfig,
+
     // ALERTS (D-01)
     pub alerts: AlertsConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AutoUpdateConfig {
+    pub enabled: bool,
+    pub channel: UpdateChannel,
+    pub check_interval_secs: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum UpdateChannel {
+    Stable,
+    Canary,
+}
+
+impl Default for AutoUpdateConfig {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            channel: UpdateChannel::Stable,
+            check_interval_secs: 86400,
+        }
+    }
 }
 
 impl Default for AgentConfig {
@@ -81,6 +107,7 @@ impl Default for AgentConfig {
             data_dir,
             // D-01: Alert thresholds (CPU >80%, Memory >85%, Disk >90%)
             alerts: AlertsConfig::default(),
+            auto_update: AutoUpdateConfig::default(),
         }
     }
 }

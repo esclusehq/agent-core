@@ -272,6 +272,22 @@ fn load_toml_config(config: &mut AgentConfig) {
                 config.data_dir = Path::new(s).to_path_buf();
             }
         }
+
+        // [updater]
+        if let Some(upd) = toml_map.get("updater") {
+            if let Some(v) = upd.get("enabled").and_then(|v| v.as_bool()) {
+                config.auto_update.enabled = v;
+            }
+            if let Some(v) = upd.get("channel").and_then(|v| v.as_str()) {
+                config.auto_update.channel = match v.to_lowercase().as_str() {
+                    "canary" => super::UpdateChannel::Canary,
+                    _ => super::UpdateChannel::Stable,
+                };
+            }
+            if let Some(v) = upd.get("interval").and_then(|v| v.as_integer()) {
+                config.auto_update.check_interval_secs = v as u64;
+            }
+        }
     }
 }
 
