@@ -82,7 +82,7 @@ impl Default for AgentConfig {
             .join("escluse-agent");
 
         Self {
-            backend_url: "wss://app.esluce.com/api/ws/node".to_string(),
+            backend_url: "wss://app.esclusehg.com/api/ws/node".to_string(),
             api_key: SecretString::new(String::new()),
             agent_name: hostname::get()
                 .map(|h| h.to_string_lossy().to_string())
