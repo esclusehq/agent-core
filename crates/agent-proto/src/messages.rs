@@ -29,6 +29,8 @@ pub enum BackendToAgent {
     ConfigUpdate(serde_json::Value),
     DnsConfig(DnsConfigPayload),
     RelayConfigSync(RelayConfigPayload),
+    #[serde(rename = "relay_disconnect")]
+    RelayDisconnect(RelayDisconnectPayload),
     #[serde(rename = "error")]
     BackendError(BackendErrorPayload),
 }
@@ -268,6 +270,11 @@ pub struct ContainerEventPayload {
 pub struct BackendErrorPayload {
     pub code: String,
     pub message: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RelayDisconnectPayload {
+    pub server_id: Uuid,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
