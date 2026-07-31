@@ -29,6 +29,8 @@ pub enum BackendToAgent {
     ConfigUpdate(serde_json::Value),
     DnsConfig(DnsConfigPayload),
     RelayConfigSync(RelayConfigPayload),
+    #[serde(rename = "relay_connect")]
+    RelayConnect(RelayConnectPayload),
     #[serde(rename = "relay_disconnect")]
     RelayDisconnect(RelayDisconnectPayload),
     #[serde(rename = "error")]
@@ -277,6 +279,26 @@ pub struct RelayDisconnectPayload {
     pub server_id: Uuid,
 }
 
+/// Backend tells the agent to open a relay tunnel for a single server.
+/// Sent on server create if a node is already assigned, and on agent
+/// reconnect for every server assigned to that node.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RelayConnectPayload {
+    pub server_id: Uuid,
+    /// Short hex subdomain (e.g. "a3f8b") the server is reachable at
+    /// on the relay gateway.
+    pub subdomain: String,
+    /// Gateway public port (e.g. 25565 for Minecraft Java).
+    pub public_port: u16,
+    /// Local address the relay client should forward to
+    /// (e.g. "127.0.0.1:25565").
+    pub local_mc_addr: String,
+    /// Optional loader discriminator. "bedrock" triggers UDP relay
+    /// instead of TCP subdomain routing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub loader: Option<String>,
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum DnsRecordStatus {
     Created,
@@ -326,7 +348,7 @@ mod tests {
             timestamp: Utc::now(),
         };
         let json = serde_json::to_value(&payload).unwrap();
-        assert_eq!(json["agent_id"], Uuid::nil().to_string());
+        assert_eq!(json["node_id"], Uuid::nil().to_string());
         assert_eq!(json["exit_code"], 1);
         assert_eq!(json["log_excerpt"], "panic");
     }
@@ -413,7 +435,7 @@ mod tests {
             stream: LogStream::Stdout,
         };
         let json = serde_json::to_value(&payload).unwrap();
-        assert_eq!(json["agent_id"], Uuid::nil().to_string());
+        assert_eq!(json["node_id"], Uuid::nil().to_string());
         assert!(json.get("server_id").is_none());
     }
 
@@ -438,5 +460,30 @@ mod tests {
         let json = serde_json::to_value(&relay_sync).unwrap();
         assert_eq!(json["type"], "relay_config_sync");
         assert_eq!(json["relay_token"], "tok");
+    }
+
+    #[test]
+    fn test_relay_connect_payload() {
+        let connect = BackendToAgent::RelayConnect(RelayConnectPayload {
+            server_id: Uuid::new_v4(),
+            subdomain: "a3f8b".into(),
+            public_port: 25565,
+            local_mc_addr: "127.0.0.1:25565".into(),
+            loader: None,
+        });
+        let json = serde_json::to_value(&connect).unwrap();
+        assert_eq!(json["type"], "relay_connect");
+        assert_eq!(json["subdomain"], "a3f8b");
+        assert_eq!(json["public_port"], 25565);
+        assert!(json.get("loader").is_none());
+
+        let deserialized: BackendToAgent = serde_json::from_value(json).unwrap();
+        match deserialized {
+            BackendToAgent::RelayConnect(p) => {
+                assert_eq!(p.local_mc_addr, "127.0.0.1:25565");
+                assert!(p.loader.is_none());
+            }
+            other => panic!("expected RelayConnect, got {:?}", other),
+        }
     }
 }
