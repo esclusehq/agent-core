@@ -97,6 +97,11 @@ impl RegisterPayload {
         self.podman_version = podman_version;
         self
     }
+
+    pub fn with_agent_version(mut self, version: impl Into<String>) -> Self {
+        self.version = version.into();
+        self
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
